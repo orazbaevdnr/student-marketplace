@@ -10,9 +10,9 @@ import {
 } from './types';
 import { DEMO_USER, SEED_LISTINGS, SEED_USERS } from './seed';
 
-const STORAGE_KEY_LISTINGS = 'student_marketplace_listings_v1';
-const STORAGE_KEY_USERS = 'student_marketplace_users_v1';
-const STORAGE_KEY_FAVORITES_PREFIX = 'student_marketplace_favs_';
+const STORAGE_KEY_LISTINGS = 'student_marketplace_listings_clean';
+const STORAGE_KEY_USERS = 'student_marketplace_users_clean';
+const STORAGE_KEY_FAVORITES_PREFIX = 'student_marketplace_favs_clean_';
 
 const delay = (ms = Math.floor(Math.random() * 300) + 300) =>
   new Promise((resolve) => setTimeout(resolve, ms));
