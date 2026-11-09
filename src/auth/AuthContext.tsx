@@ -10,7 +10,7 @@ import {
   onAuthStateChanged,
   User as FirebaseUser,
 } from 'firebase/auth';
-import { auth, googleProvider, microsoftProvider, isFirebaseConfigured } from './firebase';
+import { auth, googleProvider, isFirebaseConfigured } from './firebase';
 import { User } from '../api/types';
 import { DEMO_USER } from '../api/seed';
 import { api } from '../api';
@@ -190,24 +190,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithMicrosoft = async () => {
-    if (!isFirebaseConfigured || !auth || !microsoftProvider) {
-      // Graceful fallback with friendly message when not configured
-      throw new Error(
-        "This Microsoft account can't sign in here (your organization may block it). Use email or Google instead."
-      );
-    }
-    try {
-      const res = await signInWithPopup(auth, microsoftProvider);
-      await syncWithApiUser({
-        id: res.user.uid,
-        name: res.user.displayName || 'Microsoft Student',
-        email: res.user.email || '',
-        avatarUrl: res.user.photoURL || undefined,
-        emailVerified: res.user.emailVerified,
-      });
-    } catch (err: any) {
-      throw new Error(getFriendlyAuthErrorMessage(err));
-    }
+    throw new Error(
+      "Microsoft login is disabled. Please use email or Google instead."
+    );
   };
 
   const signInDemo = async () => {

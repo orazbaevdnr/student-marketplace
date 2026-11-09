@@ -2,9 +2,9 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import {
   getAuth,
   GoogleAuthProvider,
-  OAuthProvider,
   Auth,
 } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -22,18 +22,18 @@ export const isFirebaseConfigured = Boolean(
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
+let db: Firestore | null = null;
 let googleProvider: GoogleAuthProvider | null = null;
-let microsoftProvider: OAuthProvider | null = null;
 
 if (isFirebaseConfigured) {
   try {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     auth = getAuth(app);
+    db = getFirestore(app);
     googleProvider = new GoogleAuthProvider();
-    microsoftProvider = new OAuthProvider('microsoft.com');
   } catch (error) {
-    console.warn('Firebase initialization error; falling back to mock auth only:', error);
+    console.warn('Firebase initialization error:', error);
   }
 }
 
-export { auth, googleProvider, microsoftProvider };
+export { auth, db, googleProvider };
