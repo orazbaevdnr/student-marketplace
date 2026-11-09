@@ -22,6 +22,24 @@ import {
   User,
 } from './types';
 
+// Helper to remove any undefined fields recursively so Firestore accepts the object
+function sanitizeForFirestore<T>(obj: T): T {
+  if (obj === null || obj === undefined) return null as any;
+  if (Array.isArray(obj)) {
+    return obj.map(sanitizeForFirestore) as any;
+  }
+  if (typeof obj === 'object') {
+    const clean: Record<string, any> = {};
+    for (const [key, val] of Object.entries(obj)) {
+      if (val !== undefined) {
+        clean[key] = typeof val === 'object' && val !== null ? sanitizeForFirestore(val) : val;
+      }
+    }
+    return clean as T;
+  }
+  return obj;
+}
+
 export class FirestoreApiClient implements ApiClient {
   private getDb() {
     if (!db) {
@@ -117,14 +135,14 @@ export class FirestoreApiClient implements ApiClient {
       createdAt: new Date().toISOString(),
     };
 
-    await setDoc(doc(firestore, 'listings', id), newListing);
+    await setDoc(doc(firestore, 'listings', id), sanitizeForFirestore(newListing));
     return newListing;
   }
 
   async updateListing(id: string, data: UpdateListingInput): Promise<Listing> {
     const firestore = this.getDb();
     const docRef = doc(firestore, 'listings', id);
-    await updateDoc(docRef, data as any);
+    await updateDoc(docRef, sanitizeForFirestore(data) as any);
 
     const updated = await this.getListing(id);
     if (!updated) throw new Error('Listing not found');
@@ -239,7 +257,7 @@ export class FirestoreApiClient implements ApiClient {
       avatarUrl: data.avatarUrl ?? existing?.avatarUrl,
     };
 
-    await setDoc(userDocRef, updatedUser, { merge: true });
+    await setDoc(userDocRef, sanitizeForFirestore(updatedUser), { merge: true });
     return updatedUser;
   }
 }
