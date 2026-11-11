@@ -26,3 +26,8 @@ dist-ssr
 # Environment
 .env
 .env*.local
+
+# Deployment secrets and runtime data
+deploy/.env.prod
+deploy/backups/
+deploy/nginx/certs/

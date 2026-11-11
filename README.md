@@ -2,7 +2,7 @@
 
 A university campus marketplace web application where students buy and sell textbooks, electronics, dorm essentials, furniture, clothes, and sports gear.
 
-Built with **React 18 + Vite + TypeScript**, **Tailwind CSS**, **React Router v6**, **Firebase Auth**, and **Lucide React**.
+Built with **React 18 + Vite + TypeScript**, **Tailwind CSS**, **React Router v7**, **Firebase Auth**, and **Lucide React**.
 
 ---
 
@@ -41,7 +41,7 @@ npm run build
 |---|---|---|
 | `VITE_USE_MOCK` | `true` | When `true`, uses the client-side mock adapter with localStorage persistence and realistic loading delays. Set to `false` to connect to a real backend REST API. |
 | `VITE_ENABLE_DEMO_LOGIN` | `true` | Shows 1-click **Demo Login** button on `/login` for seamless demonstration without needing credentials. |
-| `VITE_API_BASE_URL` | `http://localhost:8000` | Base URL of the backend REST API when `VITE_USE_MOCK=false`. |
+| `VITE_API_BASE_URL` | `http://localhost:8080/api/client` | Base URL of the backend REST API when `VITE_USE_MOCK=false`. Use `/api/client` when Nginx proxies the API on the same origin. |
 | `VITE_FIREBASE_API_KEY` | *(empty)* | Firebase Web API Key. |
 | `VITE_FIREBASE_AUTH_DOMAIN` | *(empty)* | Firebase Auth Domain (e.g. `your-project.firebaseapp.com`). |
 | `VITE_FIREBASE_PROJECT_ID` | *(empty)* | Firebase Project ID. |
@@ -122,3 +122,21 @@ src/
     format.ts           # Price, relative date, initials formatting
     validation.ts       # Input validation & client image resize (1024px max)
 ```
+
+---
+
+## Deployment
+
+The production stack (Nginx + React + Spring Boot + PostgreSQL) lives in [`deploy/`](deploy/):
+
+- [`deploy/DEPLOYMENT.md`](deploy/DEPLOYMENT.md) — step-by-step deployment, HTTPS, backups, operations;
+- [`deploy/SECURITY_REVIEW.md`](deploy/SECURITY_REVIEW.md) — security findings, fixes and residual risks;
+- [`deploy/docker-compose.prod.yml`](deploy/docker-compose.prod.yml) — the production Compose file.
+
+```bash
+cd deploy
+cp .env.prod.example .env.prod      # fill in the secrets
+docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
+```
+
+Only ports 80/443 are published; the backend and PostgreSQL stay on the internal Docker network.

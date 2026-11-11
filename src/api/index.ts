@@ -4,15 +4,18 @@ import { RestApiClient } from './restAdapter';
 import { FirestoreApiClient } from './firestoreAdapter';
 import { isFirebaseConfigured } from '../auth/firebase';
 
-// If Firebase is configured, use real Cloud Firestore database!
-// Otherwise fallback to mock or REST.
-const useMock = import.meta.env.VITE_USE_MOCK === 'true' && !isFirebaseConfigured;
-
+// Priority:
+// 1. VITE_USE_MOCK=false -> real Spring Boot backend (REST)
+// 2. Firebase configured -> Cloud Firestore
+// 3. otherwise -> local mock
 function createApiClient(): ApiClient {
+  if (import.meta.env.VITE_USE_MOCK === 'false') {
+    return new RestApiClient();
+  }
   if (isFirebaseConfigured) {
     return new FirestoreApiClient();
   }
-  if (useMock) {
+  if (import.meta.env.VITE_USE_MOCK === 'true') {
     return new MockApiClient();
   }
   return new RestApiClient();

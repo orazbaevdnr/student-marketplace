@@ -196,7 +196,7 @@ export const Filters: React.FC<FiltersProps> = ({
             {/* Price range */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
-                {strings.catalog.filterByPrice} ($)
+                {strings.catalog.filterByPrice} (₸)
               </label>
               <div className="flex items-center gap-2">
                 <input

@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+.git
+.gitignore
+*.log
+.env
+.env.*
+deploy/.env.prod
+deploy/backups
+deploy/nginx/certs
+deploy/*.md
+README.md
+PROJECT_GUIDE.md
+DEMO_SCRIPT.md

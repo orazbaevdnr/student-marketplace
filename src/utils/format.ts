@@ -4,11 +4,11 @@ export function formatPrice(price: number): string {
   if (price === 0) {
     return strings.common.free;
   }
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('ru-KZ', {
     style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: price % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: 2,
+    currency: 'KZT',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(price);
 }
 

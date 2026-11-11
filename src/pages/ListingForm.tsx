@@ -99,8 +99,8 @@ export const ListingForm: React.FC = () => {
     }
 
     const numPrice = Number(price);
-    if (price === '' || isNaN(numPrice) || numPrice < 0) {
-      errs.price = 'Please enter a valid price (0 or higher)';
+    if (price === '' || isNaN(numPrice) || numPrice < 1) {
+      errs.price = 'Please enter a price of 1 or higher';
     }
 
     if (!category) {
@@ -132,11 +132,9 @@ export const ListingForm: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // If no images uploaded, use a random aesthetic placeholder
-      const finalImages =
-        images.length > 0
-          ? images
-          : [`https://picsum.photos/seed/${encodeURIComponent(title.slice(0, 10))}/600/450`];
+      // The backend accepts only data URLs or URLs of photos that already belong
+      // to this listing. An empty array is valid; the UI renders its own placeholder.
+      const finalImages = images;
 
       if (isEditMode && id) {
         const updated = await api.updateListing(id, {
@@ -285,7 +283,7 @@ export const ListingForm: React.FC = () => {
           <Input
             label={strings.listingForm.priceLabel}
             type="number"
-            min="0"
+            min="1"
             step="1"
             placeholder={strings.listingForm.pricePlaceholder}
             value={price}
@@ -293,7 +291,7 @@ export const ListingForm: React.FC = () => {
               setPrice(e.target.value);
               markDirty();
             }}
-            helperText="Set 0 for free giveaways"
+            helperText="Minimum 1 ₸"
             error={errors.price}
             required
           />
