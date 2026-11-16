@@ -13,14 +13,14 @@ import {
   User,
 } from './types';
 import { DEMO_USER, SEED_LISTINGS, SEED_USERS } from './seed';
-import { SEED_REVIEWS } from './seedReviews';
 import { computeSellerStats, sanitizeText } from '../utils/reviews';
 import { setAccessToken } from '../auth/session';
 
 const STORAGE_KEY_LISTINGS = 'student_marketplace_listings_live_v2';
 const STORAGE_KEY_USERS = 'student_marketplace_users_live_v2';
 const STORAGE_KEY_FAVORITES_PREFIX = 'student_marketplace_favs_live_v2_';
-const STORAGE_KEY_REVIEWS = 'student_marketplace_reviews_v1';
+const STORAGE_KEY_REVIEWS = 'student_marketplace_reviews_v2';
+const LEGACY_REVIEWS_KEYS = ['student_marketplace_reviews_v1'];
 
 // Remove all previous demo items from browser storage
 try {
@@ -28,6 +28,7 @@ try {
   localStorage.removeItem('student_marketplace_listings_clean');
   localStorage.removeItem('student_marketplace_users_v1');
   localStorage.removeItem('student_marketplace_users_clean');
+  LEGACY_REVIEWS_KEYS.forEach((key) => localStorage.removeItem(key));
 } catch (e) {}
 
 const delay = (ms = Math.floor(Math.random() * 200) + 200) =>
@@ -104,13 +105,13 @@ function getStoredReviews(): Review[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_REVIEWS);
     if (!raw) {
-      localStorage.setItem(STORAGE_KEY_REVIEWS, JSON.stringify(SEED_REVIEWS));
-      return SEED_REVIEWS;
+      localStorage.setItem(STORAGE_KEY_REVIEWS, '[]');
+      return [];
     }
     return JSON.parse(raw);
   } catch (e) {
     console.error('Failed to read reviews from localStorage', e);
-    return SEED_REVIEWS;
+    return [];
   }
 }
 

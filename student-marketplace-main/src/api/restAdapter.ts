@@ -14,20 +14,19 @@ import {
   User,
 } from './types';
 import { computeSellerStats, sanitizeText } from '../utils/reviews';
-import { SEED_REVIEWS } from './seedReviews';
 
-const STORAGE_KEY_REVIEWS = 'sm_reviews_v1';
+const STORAGE_KEY_REVIEWS = 'sm_reviews_v2';
 
 function getStoredLocalReviews(): Review[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_REVIEWS);
     if (!raw) {
-      localStorage.setItem(STORAGE_KEY_REVIEWS, JSON.stringify(SEED_REVIEWS));
-      return SEED_REVIEWS;
+      localStorage.setItem(STORAGE_KEY_REVIEWS, '[]');
+      return [];
     }
     return JSON.parse(raw);
   } catch {
-    return SEED_REVIEWS;
+    return [];
   }
 }
 
