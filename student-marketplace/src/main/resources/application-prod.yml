@@ -1,0 +1,30 @@
+# Production profile: SPRING_PROFILES_ACTIVE=prod (set by deploy/docker-compose.prod.yml).
+# Everything here is about not exposing developer surface on a public server.
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+    include-exception: false
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: WARN
+    org.springframework.web: INFO

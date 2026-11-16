@@ -1,0 +1,62 @@
+package com.studentmarketplace.favorite;
+
+import com.studentmarketplace.listing.Listing;
+import com.studentmarketplace.user.User;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+import java.time.Instant;
+
+/** Table FAVORITES: a user saved a listing. UNIQUE (user_id, listing_id). */
+@Entity
+@Table(name = "favorites")
+public class Favorite {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "favorite_id")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "listing_id", nullable = false)
+    private Listing listing;
+
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    protected Favorite() {
+    }
+
+    public Favorite(User user, Listing listing, Instant createdAt) {
+        this.user = user;
+        this.listing = listing;
+        this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Listing getListing() {
+        return listing;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+}

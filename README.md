@@ -1,142 +1,76 @@
-# Student Marketplace — Frontend
+# Student Marketplace
 
-A university campus marketplace web application where students buy and sell textbooks, electronics, dorm essentials, furniture, clothes, and sports gear.
+A university campus marketplace: students buy and sell textbooks, electronics, dorm essentials,
+furniture, clothes and sports gear. Sellers have public profiles with reviews, 🎓 rating badges and
+trust statistics.
 
-Built with **React 18 + Vite + TypeScript**, **Tailwind CSS**, **React Router v7**, **Firebase Auth**, and **Lucide React**.
+This repository contains the full-stack project:
 
----
+```
+student-marketplace/        Spring Boot backend (Java 21, PostgreSQL, Flyway, JWT)
+student-marketplace-main/   React + Vite frontend (TypeScript, Tailwind, React Router v7)
+data/photos/                Uploaded listing photos (runtime data, not committed)
+```
 
-## Quick Start
+## How the frontend picks its data source
 
-### 1. Install dependencies
+The frontend is hybrid, so the same code works locally and on GitHub Pages:
+
+| Where it runs | Auth / data | How |
+| --- | --- | --- |
+| Local development (`npm run dev`) | Real Spring Boot backend with JWT | Vite proxies `/api` to `http://localhost:8080` |
+| Docker / production build (`npm run build`) | Real backend on the same origin | `VITE_API_BASE_URL=/api/client`, Nginx proxies `/api` |
+| GitHub Pages (`npm run deploy`) | In-browser demo (mock adapter + `localStorage`) | `npm run build:pages` (`--mode pages`); runtime also forces mock on `*.github.io` |
+
+The reviews system (ratings, tags, seller badges, top sellers) is implemented in both modes. The
+backend does not expose review endpoints yet: the REST adapter tries `/api/client/reviews` and
+falls back to `localStorage` when the endpoint is unavailable.
+
+## Quick start (local, full stack)
+
+### 1. Backend
+
 ```bash
+cd student-marketplace
+mvn spring-boot:run -Dspring-boot.run.profiles=dev   # in PowerShell quote the -D flag
+```
+
+Dev profile uses in-memory H2 and seeds an admin account (`admin@kbtu.kz` / `Admin12345!`).
+Swagger UI: <http://localhost:8080/swagger-ui.html>. PostgreSQL setup: see
+`student-marketplace/README.md`.
+
+### 2. Frontend
+
+```bash
+cd student-marketplace-main
 npm install
-```
-
-### 2. Configure environment variables
-Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
-*(On Windows PowerShell: `Copy-Item .env.example .env`)*
-
-By default, the application runs in **Mock Mode** (`VITE_USE_MOCK=true`) with **Demo Login** enabled (`VITE_ENABLE_DEMO_LOGIN=true`), so no Firebase configuration or backend setup is required for local testing or immediate presentation defense!
-
-### 3. Run development server
-```bash
 npm run dev
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-### 4. Build for production
-```bash
-npm run build
-```
+Open <http://localhost:5173>. The demo login button signs in without the backend; regular
+sign-in/sign-up goes to the Spring Boot API.
 
----
-
-## Environment Variables
-
-| Variable | Default | Description |
-|---|---|---|
-| `VITE_USE_MOCK` | `true` | When `true`, uses the client-side mock adapter with localStorage persistence and realistic loading delays. Set to `false` to connect to a real backend REST API. |
-| `VITE_ENABLE_DEMO_LOGIN` | `true` | Shows 1-click **Demo Login** button on `/login` for seamless demonstration without needing credentials. |
-| `VITE_API_BASE_URL` | `http://localhost:8080/api/client` | Base URL of the backend REST API when `VITE_USE_MOCK=false`. Use `/api/client` when Nginx proxies the API on the same origin. |
-| `VITE_FIREBASE_API_KEY` | *(empty)* | Firebase Web API Key. |
-| `VITE_FIREBASE_AUTH_DOMAIN` | *(empty)* | Firebase Auth Domain (e.g. `your-project.firebaseapp.com`). |
-| `VITE_FIREBASE_PROJECT_ID` | *(empty)* | Firebase Project ID. |
-| `VITE_FIREBASE_APP_ID` | *(empty)* | Firebase App ID. |
-
----
-
-## Firebase Setup Guide
-
-When connecting live Firebase authentication:
-
-1. Go to the [Firebase Console](https://console.firebase.google.com/) and create a project.
-2. Under **Build > Authentication > Sign-in method**:
-   - **Email/Password:** Enable Email/Password (Email link is optional).
-   - **Google:** Enable Google provider and configure support email.
-   - **Microsoft:** Enable Microsoft provider (OAuth).
-3. Under **Authentication > Settings > Authorized domains**:
-   - Ensure `localhost` is listed (it is added by default).
-4. In **Project settings > General > Your apps**, register a Web app (`</>`) and copy the config credentials into your `.env` file:
-   ```env
-   VITE_FIREBASE_API_KEY=AIzaSy...
-   VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-   VITE_FIREBASE_PROJECT_ID=your-project
-   VITE_FIREBASE_APP_ID=1:123456...
-   ```
-5. Note: If Firebase credentials are not provided or Firebase is unreachable, the application gracefully handles it and keeps the demo working via **Demo Login**.
-
----
-
-## Switching Between Mock & Real Backend
-
-The data layer is completely abstracted behind `src/api/` (`ApiClient` interface):
-
-- **Mock Adapter (`src/api/mockAdapter.ts`):**
-  Uses 25+ realistic pre-seeded student listings, 5 mock sellers, persistent updates in `localStorage`, and an artificial 300–600ms latency to demonstrate realistic skeletons and loading states.
-- **REST Adapter (`src/api/restAdapter.ts`):**
-  Connects to a real REST backend matching the endpoints defined in `API_CONTRACT.md`.
-- **To switch to Real Backend:**
-  Set `VITE_USE_MOCK=false` and `VITE_API_BASE_URL=https://your-api.com` in `.env`.
-
----
-
-## Project Structure
-
-```
-src/
-  api/
-    types.ts            # Data models, query params, ApiClient contract
-    seed.ts             # 25+ realistic listings and mock student profiles
-    mockAdapter.ts      # Client-side mock API with localStorage persistence
-    restAdapter.ts      # REST API implementation
-    index.ts            # Singleton API client selector based on VITE_USE_MOCK
-  auth/
-    firebase.ts         # Firebase initialization with graceful fallback
-    AuthContext.tsx     # Session management (Demo, Email, Google, Microsoft)
-    ProtectedRoute.tsx  # Guard for private routes with return-path redirect
-    errors.ts           # Friendly error messages mapping
-  components/
-    ui/                 # Button, Input, Select, Badge, Modal, Toast, Skeleton, EmptyState, Dropdown
-    layout/             # Header, BottomNav, EmailVerificationBanner, Layout
-    listings/           # ListingCard, ListingGrid, Filters, ImageUploader, Gallery
-  pages/
-    Login.tsx           # Sign in, Sign up, Google/Microsoft, 1-click Demo, Forgot password
-    VerifyEmail.tsx     # Optional skippable verification screen
-    Catalog.tsx         # Main catalog with search, filters, sorting, load more
-    ListingDetails.tsx  # Item details, gallery, seller contact, owner controls
-    ListingForm.tsx     # Create & edit listing with client-side image compression
-    MyListings.tsx      # Active / Sold tabs, mark as sold, delete modal
-    Favorites.tsx       # Saved items grid with instant toggle
-    Profile.tsx         # User details, stats (active/sold), Telegram handle
-    NotFound.tsx        # 404 page
-  hooks/
-    useDebounce.ts      # Debounced search (300ms)
-    useFavorites.ts     # Optimistic favorites toggle and state
-  i18n/
-    strings.ts          # Centralized UI strings dictionary
-  utils/
-    format.ts           # Price, relative date, initials formatting
-    validation.ts       # Input validation & client image resize (1024px max)
-```
-
----
-
-## Deployment
-
-The production stack (Nginx + React + Spring Boot + PostgreSQL) lives in [`deploy/`](deploy/):
-
-- [`deploy/DEPLOYMENT.md`](deploy/DEPLOYMENT.md) — step-by-step deployment, HTTPS, backups, operations;
-- [`deploy/SECURITY_REVIEW.md`](deploy/SECURITY_REVIEW.md) — security findings, fixes and residual risks;
-- [`deploy/docker-compose.prod.yml`](deploy/docker-compose.prod.yml) — the production Compose file.
+## Deploy to GitHub Pages
 
 ```bash
-cd deploy
-cp .env.prod.example .env.prod      # fill in the secrets
-docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
+cd student-marketplace-main
+npm run deploy        # build:pages + publish dist/ to the gh-pages branch
 ```
 
-Only ports 80/443 are published; the backend and PostgreSQL stay on the internal Docker network.
+Published at <https://orazbaevdnr.github.io/student-marketplace/>. The Pages build uses the mock
+adapter, so the site is fully interactive without a server (data is stored per browser).
+
+## Deploy the real stack
+
+Docker Compose + Nginx + HTTPS instructions are in
+[`student-marketplace-main/deploy/DEPLOYMENT.md`](student-marketplace-main/deploy/DEPLOYMENT.md).
+Security notes and residual risks are in
+[`student-marketplace-main/deploy/SECURITY_REVIEW.md`](student-marketplace-main/deploy/SECURITY_REVIEW.md).
+
+## Documentation
+
+- `student-marketplace-main/README.md` — frontend features, scripts and configuration
+- `student-marketplace/README.md` — backend architecture, API and database
+- `student-marketplace-main/API_CONTRACT.md` — REST contract used by the frontend
+- `student-marketplace-main/PROJECT_GUIDE.md` — architecture walkthrough
+- `student-marketplace-main/DEMO_SCRIPT.md` — demo/defense scenario
