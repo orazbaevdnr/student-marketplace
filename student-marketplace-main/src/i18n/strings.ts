@@ -6,7 +6,7 @@ export const strings = {
   nav: {
     home: 'Home',
     catalog: 'Catalog',
-    postListing: '+ Post listing',
+    postListing: 'Post listing',
     myListings: 'My listings',
     favorites: 'Favorites',
     profile: 'Profile',

@@ -33,6 +33,14 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 npm run build
 ```
 
+### 5. Run the tests
+```bash
+npm test              # Vitest, one pass
+npm run test:coverage # Vitest with v8 coverage
+```
+
+Vitest + React Testing Library on jsdom: **20 tests in 8 files**. See [`TEST_REPORT.md`](TEST_REPORT.md) for the results, the full test list and the manual checklist.
+
 ---
 
 ## Environment Variables
@@ -42,7 +50,7 @@ npm run build
 | `VITE_API_BASE_URL` | `/api/client` | Base URL of the Spring Boot API. `/api/client` works both in development (Vite proxies `/api` to `http://localhost:8080`) and in production (Nginx proxies it on the same origin). |
 | `VITE_BASE_PATH` | `/` | Public path of the built app, e.g. `/marketplace/` when served from a sub-directory. |
 
-There is no mock mode and no client-side persistence: every screen reads and writes the backend.
+By default every screen reads and writes the backend. The GitHub Pages build (`npm run build:pages`, `VITE_USE_MOCK=true`) swaps in the in-browser `MockApiClient` for a static demo; Demo Login is rendered only in that mode. Reviews stay server-backed in REST mode.
 
 ---
 
@@ -86,9 +94,9 @@ src/
     session.ts          # JWT storage in localStorage + "auth expired" event
     errors.ts           # Friendly error messages mapping
   components/
-    ui/                 # Button, Input, Select, Badge, Modal, Toast, Skeleton, EmptyState, Dropdown
+    ui/                 # Button, Input, Select, Badge, Modal, Toast, Skeleton, EmptyState, Dropdown, SafeImage
     layout/             # Header, BottomNav, Layout
-    listings/           # ListingCard, ListingGrid, Filters, ImageUploader, Gallery
+    listings/           # ListingCard, ListingGrid, Filters, ImageUploader, Gallery, Lightbox
   pages/
     Login.tsx           # Sign in / sign up (email + password)
     Catalog.tsx         # Main catalog with search, filters, sorting, load more
@@ -105,7 +113,10 @@ src/
     strings.ts          # Centralized UI strings dictionary
   utils/
     format.ts           # Price, date, initials formatting
-    validation.ts       # Input validation & client image resize (1024px max)
+    validation.ts       # Listing draft validation & client image resize (1024px max)
+    reviews.ts          # Seller stats, rating colours, tag groups
+  test/
+    setup.ts            # Testing Library cleanup, localStorage reset, polyfills
 ```
 
 ---

@@ -71,6 +71,15 @@ Click-by-click script for the project defense. Every step uses the real Spring B
 
 ---
 
+### Phase 7: Photo Viewer & Automated Tests (30 seconds)
+
+22. **Open a listing → click the photo → swipe through the photos → close with `Escape`.**
+    - The gallery opens a full-screen viewer: arrows, thumbnails, a `n / total` counter, and `Escape`, the X button or a backdrop click all close it. On a phone the same photo can be swiped; a single-photo listing shows no arrows, and a listing without photos never opens the viewer.
+23. **Show `npm test` with 20 passing tests.**
+    - Run it live (about 5 seconds) or show the recorded output: 8 files, 20 tests passed. Point out that the suite covers seller stats, validation, formatting, the mock API and the viewer.
+
+---
+
 ### Concluding Note for the Defense
 
-*"The frontend is a pure React client: all state lives in PostgreSQL, the schema is versioned with Flyway and owned by Hibernate mappings, and every request is authenticated with a JWT issued by the Spring Boot backend. The API layer under `src/api/` is the only place that knows about HTTP, so the UI is completely independent of the transport."*
+*"The frontend is a pure React client: all state lives in PostgreSQL, the schema is versioned with Flyway and owned by Hibernate mappings, and every request is authenticated with a JWT issued by the Spring Boot backend. The API layer under `src/api/` is the only place that knows about HTTP, so the UI is completely independent of the transport. The 20 automated tests run in about five seconds and protect the review maths, listing validation, the mock adapter and the new photo viewer, so the last-minute changes before the defense are checked rather than hoped for."*
