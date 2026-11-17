@@ -70,7 +70,7 @@ export const ReviewList: React.FC<ReviewListProps> = ({
         title={strings.reviews.deleteConfirmTitle}
       >
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-ink-600">
             {strings.reviews.deleteConfirmDesc}
           </p>
 

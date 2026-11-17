@@ -35,17 +35,17 @@ export const TagChips: React.FC<TagChipsProps> = ({
               key={tag}
               type="button"
               onClick={() => onToggleTag && onToggleTag(tag)}
-              className={`inline-flex items-center rounded-full font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+              aria-pressed={isSelected}
+              className={`inline-flex items-center rounded-full font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500 focus-visible:ring-offset-1 ${
                 size === 'sm' ? 'px-2.5 py-1 text-xs' : 'px-3 py-1.5 text-sm'
               } ${
                 isSelected
                   ? isPositive
-                    ? 'bg-emerald-600 text-white shadow-sm ring-emerald-500'
-                    : 'bg-rose-600 text-white shadow-sm ring-rose-500'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
+                    ? 'bg-mint-600 text-white'
+                    : 'bg-coral-600 text-white'
+                  : 'bg-ink-100 text-ink-700 hover:bg-ink-200 border border-ink-200'
               }`}
             >
-              <span>{isPositive ? '✓ ' : '✕ '}</span>
               <span>{label}</span>
             </button>
           );
@@ -55,12 +55,12 @@ export const TagChips: React.FC<TagChipsProps> = ({
         return (
           <span
             key={tag}
-            className={`inline-flex items-center rounded-full font-medium ${
+            className={`inline-flex items-center rounded-full font-semibold ${
               size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-sm'
             } ${
               isPositive
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                : 'bg-rose-50 text-rose-700 border border-rose-200'
+                ? 'bg-mint-50 text-mint-700 border border-mint-200'
+                : 'bg-coral-50 text-coral-700 border border-coral-200'
             }`}
           >
             {label}

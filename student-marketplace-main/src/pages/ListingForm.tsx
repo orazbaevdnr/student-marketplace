@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Save, PlusCircle, AlertCircle } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, PlusCircle } from 'lucide-react';
 import { api, Category, Condition, Listing } from '../api';
 import { useAuth } from '../auth/AuthContext';
 import { strings } from '../i18n/strings';
@@ -183,7 +183,7 @@ export const ListingForm: React.FC = () => {
   if (isLoadingExisting) {
     return (
       <div className="max-w-2xl mx-auto py-12 text-center">
-        <p className="text-sm text-slate-500 font-medium">Loading listing details...</p>
+        <p className="text-sm text-ink-500 font-medium">Loading listing details...</p>
       </div>
     );
   }
@@ -213,15 +213,15 @@ export const ListingForm: React.FC = () => {
           <button
             type="button"
             onClick={handleCancel}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors mb-2"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-ink-500 hover:text-ink-900 transition-colors mb-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
           </button>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="font-display text-2xl font-bold text-ink-900 tracking-tight">
             {isEditMode ? strings.listingForm.editTitle : strings.listingForm.createTitle}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-ink-500 mt-1">
             {strings.listingForm.subtitle}
           </p>
         </div>
@@ -230,7 +230,7 @@ export const ListingForm: React.FC = () => {
       {/* Form Container */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-sm space-y-6"
+        className="bg-surface p-6 sm:p-8 rounded-2xl border border-ink-200 space-y-6"
       >
         {/* Title */}
         <Input
@@ -280,6 +280,7 @@ export const ListingForm: React.FC = () => {
             type="number"
             min="1"
             step="1"
+            inputMode="numeric"
             placeholder={strings.listingForm.pricePlaceholder}
             value={price}
             onChange={(e) => {
@@ -307,7 +308,7 @@ export const ListingForm: React.FC = () => {
 
         {/* Photos Upload */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">
+          <label className="block text-sm font-semibold text-ink-800 mb-1.5">
             {strings.listingForm.photosLabel}
           </label>
           <ImageUploader
@@ -318,17 +319,21 @@ export const ListingForm: React.FC = () => {
             }}
             maxImages={5}
           />
-          <p className="mt-1.5 text-xs text-slate-400">
+          <p className="mt-1.5 text-xs text-ink-400">
             {strings.listingForm.photosHelp}
           </p>
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">
+          <label
+            htmlFor="listing-description"
+            className="block text-sm font-semibold text-ink-800 mb-1.5"
+          >
             {strings.listingForm.descriptionLabel}
           </label>
           <textarea
+            id="listing-description"
             rows={4}
             value={description}
             onChange={(e) => {
@@ -336,25 +341,25 @@ export const ListingForm: React.FC = () => {
               markDirty();
             }}
             placeholder={strings.listingForm.descriptionPlaceholder}
-            className={`block w-full rounded-xl border bg-white px-3.5 py-2.5 text-slate-900 placeholder-slate-400 text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+            className={`block w-full rounded-lg border bg-surface px-3.5 py-2.5 text-ink-900 placeholder-ink-400 text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 ${
               errors.description
-                ? 'border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200'
-                : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-100'
+                ? 'border-coral-300 text-coral-900 focus:border-coral-500 focus:ring-coral-200'
+                : 'border-ink-200 focus:border-cobalt-500 focus:ring-cobalt-100'
             }`}
           />
           {errors.description ? (
-            <p className="mt-1.5 text-xs text-red-600 font-medium">
+            <p className="mt-1.5 text-xs text-coral-600 font-medium">
               {errors.description}
             </p>
           ) : (
-            <p className="mt-1.5 text-xs text-slate-500">
+            <p className="mt-1.5 text-xs text-ink-500">
               {strings.listingForm.descriptionHelp} ({description.length} chars)
             </p>
           )}
         </div>
 
         {/* Action Buttons */}
-        <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+        <div className="pt-4 border-t border-ink-100 flex items-center justify-end gap-3">
           <Button
             type="button"
             variant="ghost"
@@ -403,7 +408,7 @@ export const ListingForm: React.FC = () => {
           </>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-ink-600">
           Any information or photos you have entered will not be saved.
         </p>
       </Modal>

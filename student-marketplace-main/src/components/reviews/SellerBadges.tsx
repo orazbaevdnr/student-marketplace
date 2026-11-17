@@ -20,27 +20,27 @@ const BADGE_CONFIG: Record<
 > = {
   trusted_seller: {
     icon: Award,
-    bg: 'bg-amber-50',
-    text: 'text-amber-800',
-    border: 'border-amber-300',
+    bg: 'bg-sun-50',
+    text: 'text-sun-800',
+    border: 'border-sun-300',
   },
   fast_responder: {
     icon: Zap,
-    bg: 'bg-blue-50',
-    text: 'text-blue-800',
-    border: 'border-blue-300',
+    bg: 'bg-cobalt-50',
+    text: 'text-cobalt-700',
+    border: 'border-cobalt-200',
   },
   honest_listings: {
     icon: CheckCircle2,
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-800',
-    border: 'border-emerald-300',
+    bg: 'bg-mint-50',
+    text: 'text-mint-700',
+    border: 'border-mint-200',
   },
   new_seller: {
     icon: Sparkles,
-    bg: 'bg-indigo-50',
-    text: 'text-indigo-800',
-    border: 'border-indigo-200',
+    bg: 'bg-ink-100',
+    text: 'text-ink-700',
+    border: 'border-ink-200',
   },
 };
 
@@ -64,7 +64,7 @@ export const SellerBadges: React.FC<SellerBadgesProps> = ({
           <span
             key={b}
             title={desc}
-            className={`inline-flex items-center gap-1 rounded-full font-medium border ${config.bg} ${config.text} ${config.border} ${
+            className={`inline-flex items-center gap-1 rounded-full font-semibold border ${config.bg} ${config.text} ${config.border} ${
               size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-sm'
             }`}
           >

@@ -51,27 +51,27 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-lg border text-sm font-medium transition-all duration-200 transform translate-y-0 ${
+            className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-lg border text-sm font-medium transition-all duration-200 transform translate-y-0 bg-surface text-ink-800 ${
               toast.type === 'success'
-                ? 'bg-white border-emerald-200 text-slate-800'
+                ? 'border-mint-200'
                 : toast.type === 'error'
-                ? 'bg-white border-red-200 text-slate-800'
-                : 'bg-white border-slate-200 text-slate-800'
+                ? 'border-coral-200'
+                : 'border-ink-200'
             }`}
           >
             {toast.type === 'success' && (
-              <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-mint-500 shrink-0 mt-0.5" />
             )}
             {toast.type === 'error' && (
-              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-coral-500 shrink-0 mt-0.5" />
             )}
             {toast.type === 'info' && (
-              <Info className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+              <Info className="w-5 h-5 text-cobalt-500 shrink-0 mt-0.5" />
             )}
             <div className="flex-1 leading-snug">{toast.message}</div>
             <button
               onClick={() => removeToast(toast.id)}
-              className="text-slate-400 hover:text-slate-600 -mr-1 -mt-1 p-1 rounded-lg"
+              className="text-ink-400 hover:text-ink-600 -mr-1 -mt-1 p-1 rounded-lg focus-visible:ring-2 focus-visible:ring-cobalt-500"
               aria-label="Dismiss notification"
             >
               <X className="w-4 h-4" />

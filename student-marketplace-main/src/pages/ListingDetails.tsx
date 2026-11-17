@@ -4,7 +4,6 @@ import {
   Heart,
   Share2,
   Calendar,
-  Tag,
   ShieldCheck,
   MessageCircle,
   Edit3,
@@ -14,7 +13,6 @@ import {
   RotateCcw,
   ChevronRight,
   MessageSquare,
-  Sparkles,
 } from 'lucide-react';
 import { api } from '../api';
 import { Listing, Review, SellerStats } from '../api/types';
@@ -28,6 +26,7 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Skeleton } from '../components/ui/Skeleton';
+import { SafeImage } from '../components/ui/SafeImage';
 import { RatingIcons } from '../components/reviews/RatingIcons';
 import { RatingSummary } from '../components/reviews/RatingSummary';
 import { ReviewList } from '../components/reviews/ReviewList';
@@ -94,7 +93,7 @@ export const ListingDetails: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-5xl mx-auto py-6">
+      <div className="max-w-6xl mx-auto py-6">
         <Skeleton className="h-6 w-32 mb-6" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-7">
@@ -119,10 +118,10 @@ export const ListingDetails: React.FC = () => {
   if (!listing) {
     return (
       <div className="max-w-md mx-auto text-center py-16">
-        <h2 className="text-xl font-bold text-slate-900 mb-2">
+        <h2 className="font-display text-xl font-bold text-ink-900 mb-2">
           {strings.listingDetails.notFoundTitle}
         </h2>
-        <p className="text-sm text-slate-500 mb-6">
+        <p className="text-sm text-ink-500 mb-6">
           {strings.listingDetails.notFoundDesc}
         </p>
         <Button variant="primary" onClick={() => navigate('/')}>
@@ -221,12 +220,12 @@ export const ListingDetails: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto py-2 sm:py-6 space-y-10">
+    <div className="max-w-6xl mx-auto py-2 sm:py-6 space-y-10">
       {/* Back button */}
       <div>
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-ink-500 hover:text-ink-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           {strings.listingDetails.backToCatalog}
@@ -240,28 +239,26 @@ export const ListingDetails: React.FC = () => {
         </div>
 
         {/* Right Column: Listing Information & Actions */}
-        <div className="lg:col-span-5 bg-white p-6 rounded-3xl border border-slate-200/90 shadow-sm space-y-6">
+        <div className="lg:col-span-5 bg-surface p-5 sm:p-6 rounded-2xl border border-ink-200 space-y-6">
           {/* Header & Price */}
           <div>
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <div className="flex items-center gap-2 mb-2.5 flex-wrap">
               <Badge variant="category" category={listing.category} />
               <Badge variant="condition" condition={listing.condition} />
-              {isSold && (
-                <Badge variant="status" status="sold" />
-              )}
+              {isSold && <Badge variant="status" status="sold" />}
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-ink-900 leading-tight">
               {listing.title}
             </h1>
 
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-indigo-600">
+            <div className="mt-4 flex items-baseline gap-2">
+              <span className="font-display text-3xl font-bold text-ink-900 [font-variant-numeric:tabular-nums]">
                 {formatPrice(listing.price)}
               </span>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-slate-400 mt-2">
+            <div className="flex items-center gap-1.5 text-xs text-ink-400 mt-2">
               <Calendar className="w-3.5 h-3.5" />
               <span>
                 {strings.listingDetails.postedOn} {formatDate(listing.createdAt)}
@@ -270,24 +267,22 @@ export const ListingDetails: React.FC = () => {
           </div>
 
           {/* Description */}
-          <div className="border-t border-slate-100 pt-4">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-              Description
-            </h3>
-            <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+          <div className="border-t border-ink-100 pt-4">
+            <h3 className="text-xs font-semibold text-ink-500 mb-2">Description</h3>
+            <p className="text-sm text-ink-700 whitespace-pre-line leading-relaxed">
               {listing.description}
             </p>
           </div>
 
           {/* Seller Info Card with Rating & Link to Profile */}
-          <div className="border-t border-slate-100 pt-4">
+          <div className="border-t border-ink-100 pt-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <h3 className="text-xs font-semibold text-ink-500">
                 {strings.listingDetails.sellerInfo}
               </h3>
               <Link
                 to={`/seller/${listing.sellerId}`}
-                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-0.5 transition-colors"
+                className="text-xs font-semibold text-cobalt-700 hover:text-cobalt-800 flex items-center gap-0.5 transition-colors"
               >
                 <span>{strings.listingDetails.viewSellerProfile}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -296,44 +291,48 @@ export const ListingDetails: React.FC = () => {
 
             <Link
               to={`/seller/${listing.sellerId}`}
-              className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-200/70 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all group"
+              className="flex items-center gap-3 p-3 rounded-xl bg-chalk border border-ink-200 hover:border-cobalt-200 hover:bg-cobalt-50/40 transition-all group"
             >
               {listing.seller?.avatarUrl ? (
-                <img
+                <SafeImage
                   src={listing.seller.avatarUrl}
                   alt={listing.seller.name}
-                  className="w-12 h-12 rounded-full object-cover ring-2 ring-indigo-50 shrink-0"
+                  fallbackLabel=""
+                  iconClassName="w-4 h-4"
+                  className="w-12 h-12 rounded-full object-cover ring-2 ring-cobalt-100 shrink-0"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-full bg-indigo-100 text-indigo-700 font-bold text-sm flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-full bg-cobalt-100 text-cobalt-700 font-bold text-sm flex items-center justify-center shrink-0">
                   {getInitials(listing.seller?.name || 'S')}
                 </div>
               )}
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-semibold text-sm text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+                  <span className="font-semibold text-sm text-ink-900 truncate group-hover:text-cobalt-700 transition-colors">
                     {listing.seller?.name || 'Student Seller'}
                   </span>
                   <span title="Verified University Student">
-                    <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <ShieldCheck className="w-4 h-4 text-mint-500 shrink-0" />
                   </span>
                 </div>
 
-                {/* Seller caps rating or new seller badge */}
+                {/* Seller rating or new seller badge */}
                 {sellerStats && (
                   <div className="flex items-center gap-1.5 mt-0.5">
                     {sellerStats.reviewCount < 3 ? (
-                      <span className="text-xs font-medium text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded">
-                        🌱 {strings.reviews.newSeller}
+                      <span className="text-xs font-semibold text-cobalt-700 bg-cobalt-50 px-1.5 py-0.5 rounded">
+                        {strings.reviews.newSeller}
                       </span>
                     ) : (
                       <div className="flex items-center gap-1">
                         <RatingIcons value={sellerStats.averageRating} size="sm" />
-                        <span className="text-xs font-bold text-gray-700">
+                        <span className="text-xs font-bold text-ink-700">
                           {sellerStats.averageRating.toFixed(1)}
                         </span>
-                        <span className="text-[11px] text-gray-400">
+                        <span className="text-[11px] text-ink-400">
                           ({sellerStats.reviewCount})
                         </span>
                       </div>
@@ -342,7 +341,7 @@ export const ListingDetails: React.FC = () => {
                 )}
 
                 {listing.seller?.faculty && (
-                  <p className="text-xs text-slate-500 truncate mt-0.5">
+                  <p className="text-xs text-ink-500 truncate mt-0.5">
                     {listing.seller.faculty}
                   </p>
                 )}
@@ -357,7 +356,7 @@ export const ListingDetails: React.FC = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="border-t border-slate-100 pt-5 space-y-3">
+          <div className="border-t border-ink-100 pt-5 space-y-3">
             {isOwner ? (
               /* Owner Controls */
               <div className="space-y-2.5">
@@ -408,24 +407,25 @@ export const ListingDetails: React.FC = () => {
                     {strings.listingDetails.showContact}
                   </Button>
                 ) : (
-                  <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 text-left">
+                  <div className="p-4 rounded-xl bg-cobalt-50 border border-cobalt-100 text-left">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-indigo-900">
+                      <span className="text-xs font-bold text-cobalt-900">
                         {strings.listingDetails.contactInfoTitle}
                       </span>
                       <button
+                        type="button"
                         onClick={() => setShowContact(false)}
-                        className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                        className="text-xs text-cobalt-700 hover:text-cobalt-800 font-semibold"
                       >
                         {strings.listingDetails.hideContact}
                       </button>
                     </div>
-                    <div className="p-3 bg-white rounded-xl border border-indigo-100">
-                      <span className="text-sm font-semibold text-slate-800 break-all select-all">
+                    <div className="p-3 bg-surface rounded-lg border border-cobalt-100">
+                      <span className="text-sm font-semibold text-ink-800 break-all select-all">
                         {listing.contact}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-2">
+                    <p className="text-[11px] text-ink-500 mt-2">
                       Reach out directly via Telegram or email to arrange meetup on campus.
                     </p>
                   </div>
@@ -436,7 +436,7 @@ export const ListingDetails: React.FC = () => {
                   variant="outline"
                   fullWidth
                   onClick={() => handleOpenReviewModal()}
-                  leftIcon={<MessageSquare className="w-4 h-4 text-indigo-600" />}
+                  leftIcon={<MessageSquare className="w-4 h-4 text-cobalt-600" />}
                 >
                   {myReview ? strings.listingDetails.editReview : strings.listingDetails.leaveReview}
                 </Button>
@@ -447,10 +447,11 @@ export const ListingDetails: React.FC = () => {
                     variant={isFav ? 'secondary' : 'outline'}
                     fullWidth
                     onClick={() => toggleFavorite(listing)}
+                    aria-pressed={isFav}
                     leftIcon={
                       <Heart
                         className={`w-4 h-4 ${
-                          isFav ? 'fill-rose-500 text-rose-500' : 'text-slate-600'
+                          isFav ? 'fill-coral-500 text-coral-500' : 'text-ink-600'
                         }`}
                       />
                     }
@@ -474,16 +475,16 @@ export const ListingDetails: React.FC = () => {
       </div>
 
       {/* Seller Reviews Full Section below details */}
-      <div className="border-t border-slate-200/80 pt-8 space-y-6">
+      <div className="border-t border-ink-200 pt-8 space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-xl font-bold text-slate-900">
+              <MessageSquare className="w-5 h-5 text-cobalt-600" />
+              <h2 className="font-display text-xl font-bold text-ink-900">
                 {strings.listingDetails.reviewsSection}
               </h2>
             </div>
-            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            <p className="text-xs sm:text-sm text-ink-500 mt-0.5">
               Verified feedback from students who traded with {listing.seller?.name || 'this seller'}
             </p>
           </div>
@@ -519,7 +520,7 @@ export const ListingDetails: React.FC = () => {
         title={strings.listingDetails.deleteConfirmTitle}
       >
         <div className="space-y-4">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-ink-600">
             {strings.listingDetails.deleteConfirmDesc}
           </p>
           <div className="flex justify-end gap-3 pt-2">
@@ -535,7 +536,7 @@ export const ListingDetails: React.FC = () => {
               onClick={handleDelete}
               isLoading={isDeleting}
             >
-              Confirm Delete
+              Delete listing
             </Button>
           </div>
         </div>

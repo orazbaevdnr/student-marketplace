@@ -45,17 +45,17 @@ export const RATING_LABELS: Record<number, string> = {
 
 // ---- Rating color ----
 export function getRatingColor(avg: number): string {
-  if (avg >= 4.5) return 'text-green-600';
-  if (avg >= 3.5) return 'text-lime-600';
-  if (avg >= 2.5) return 'text-amber-500';
-  return 'text-red-500';
+  if (avg >= 4.5) return 'text-mint-600';
+  if (avg >= 3.5) return 'text-sun-700';
+  if (avg >= 2.5) return 'text-sun-800';
+  return 'text-coral-600';
 }
 
 export function getRatingBg(avg: number): string {
-  if (avg >= 4.5) return 'bg-green-100 text-green-700';
-  if (avg >= 3.5) return 'bg-lime-100 text-lime-700';
-  if (avg >= 2.5) return 'bg-amber-100 text-amber-700';
-  return 'bg-red-100 text-red-700';
+  if (avg >= 4.5) return 'bg-mint-100 text-mint-800';
+  if (avg >= 3.5) return 'bg-sun-100 text-sun-800';
+  if (avg >= 2.5) return 'bg-sun-50 text-sun-800';
+  return 'bg-coral-100 text-coral-800';
 }
 
 // ---- Compute stats ----

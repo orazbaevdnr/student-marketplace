@@ -36,21 +36,21 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="block text-sm font-medium text-slate-700 mb-1.5"
+            className="block text-sm font-semibold text-ink-800 mb-1.5"
           >
             {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
+            {required && <span className="text-coral-500 ml-1">*</span>}
           </label>
         )}
-        <div className="relative rounded-xl shadow-sm">
+        <div className="relative">
           <select
             ref={ref}
             id={selectId}
             required={required}
-            className={`block w-full appearance-none rounded-xl border bg-white px-3.5 py-2.5 pr-10 text-slate-900 text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed ${
+            className={`block w-full appearance-none rounded-lg border bg-surface px-3.5 py-2.5 pr-10 text-ink-900 text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:bg-chalk disabled:text-ink-500 disabled:cursor-not-allowed ${
               error
-                ? 'border-red-300 text-red-900 focus:border-red-500 focus:ring-red-200'
-                : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-100'
+                ? 'border-coral-300 text-coral-900 focus:border-coral-500 focus:ring-coral-200'
+                : 'border-ink-200 focus:border-cobalt-500 focus:ring-cobalt-100'
             } ${className}`}
             {...props}
           >
@@ -65,14 +65,14 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               </option>
             ))}
           </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-ink-400">
             <ChevronDown className="w-4 h-4" />
           </div>
         </div>
         {error ? (
-          <p className="mt-1.5 text-xs text-red-600 font-medium">{error}</p>
+          <p className="mt-1.5 text-xs text-coral-600 font-medium">{error}</p>
         ) : helperText ? (
-          <p className="mt-1.5 text-xs text-slate-500">{helperText}</p>
+          <p className="mt-1.5 text-xs text-ink-500">{helperText}</p>
         ) : null}
       </div>
     );

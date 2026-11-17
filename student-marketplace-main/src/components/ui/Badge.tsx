@@ -22,46 +22,46 @@ export const Badge: React.FC<BadgeProps> = ({
   className = '',
 }) => {
   const sizeClasses = {
-    sm: 'text-xs px-2.5 py-0.5 rounded-full font-medium',
-    md: 'text-sm px-3 py-1 rounded-full font-medium',
+    sm: 'text-xs px-2.5 py-0.5 rounded-full font-semibold',
+    md: 'text-sm px-3 py-1 rounded-full font-semibold',
   };
 
-  let colorClasses = 'bg-slate-100 text-slate-700 border border-slate-200';
+  let colorClasses = 'bg-ink-100 text-ink-700 border border-ink-200';
   let label = children;
 
   if (variant === 'condition' && condition) {
     label = strings.catalog.conditions[condition] || condition;
     switch (condition) {
       case 'new':
-        colorClasses = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+        colorClasses = 'bg-mint-50 text-mint-700 border border-mint-200';
         break;
       case 'like_new':
-        colorClasses = 'bg-teal-50 text-teal-700 border border-teal-200';
+        colorClasses = 'bg-mint-50 text-mint-700 border border-mint-200';
         break;
       case 'good':
-        colorClasses = 'bg-blue-50 text-blue-700 border border-blue-200';
+        colorClasses = 'bg-cobalt-50 text-cobalt-700 border border-cobalt-200';
         break;
       case 'fair':
-        colorClasses = 'bg-amber-50 text-amber-700 border border-amber-200';
+        colorClasses = 'bg-sun-50 text-sun-800 border border-sun-200';
         break;
     }
   } else if (variant === 'status' && status) {
     if (status === 'sold') {
       label = strings.listingDetails.soldBadge;
-      colorClasses = 'bg-slate-800 text-white font-semibold tracking-wider';
+      colorClasses = 'bg-ink-800 text-white font-semibold';
     } else if (status === 'reserved') {
       label = strings.listingDetails.reservedBadge;
-      colorClasses = 'bg-amber-100 text-amber-800 font-semibold tracking-wider';
+      colorClasses = 'bg-sun-100 text-sun-800 font-semibold';
     } else if (status === 'hidden') {
       label = strings.listingDetails.hiddenBadge;
-      colorClasses = 'bg-slate-200 text-slate-600 border border-slate-300 font-semibold tracking-wider';
+      colorClasses = 'bg-ink-200 text-ink-600 border border-ink-300 font-semibold';
     } else {
       label = strings.listingDetails.activeBadge;
-      colorClasses = 'bg-emerald-100 text-emerald-800 font-medium';
+      colorClasses = 'bg-mint-100 text-mint-800 font-semibold';
     }
   } else if (variant === 'category' && category) {
     label = strings.catalog.categories[category] || category;
-    colorClasses = 'bg-indigo-50 text-indigo-700 border border-indigo-100';
+    colorClasses = 'bg-cobalt-50 text-cobalt-700 border border-cobalt-100';
   }
 
   return (

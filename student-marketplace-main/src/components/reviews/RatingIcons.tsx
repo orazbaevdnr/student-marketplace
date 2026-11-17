@@ -72,8 +72,8 @@ export const RatingIcons: React.FC<RatingIconsProps> = ({
               role="radio"
               aria-checked={value === starIndex}
               aria-label={`${starIndex} star${starIndex > 1 ? 's' : ''}`}
-              className={`p-1 rounded-md transition-transform focus:outline-none focus:ring-2 focus:ring-indigo-500 hover:scale-110 ${
-                isFilled ? 'text-amber-500' : 'text-gray-300'
+              className={`p-1 rounded-lg transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500 focus-visible:ring-offset-1 hover:scale-110 ${
+                isFilled ? 'text-sun-500' : 'text-ink-200'
               }`}
               onMouseEnter={() => setHoverValue(starIndex)}
               onMouseLeave={() => setHoverValue(null)}
@@ -82,6 +82,7 @@ export const RatingIcons: React.FC<RatingIconsProps> = ({
             >
               <svg
                 viewBox="0 0 24 24"
+                aria-hidden="true"
                 className={`${iconSizeClass} fill-current transition-colors duration-150`}
               >
                 <path d={GRADUATION_CAP_PATH} />
@@ -96,7 +97,8 @@ export const RatingIcons: React.FC<RatingIconsProps> = ({
             {/* Background empty cap */}
             <svg
               viewBox="0 0 24 24"
-              className={`w-full h-full fill-gray-200 text-gray-200`}
+              aria-hidden="true"
+              className="w-full h-full fill-ink-200 text-ink-200"
             >
               <path d={GRADUATION_CAP_PATH} />
             </svg>
@@ -104,10 +106,10 @@ export const RatingIcons: React.FC<RatingIconsProps> = ({
             {/* Foreground filled cap (clipped by width) */}
             {fillPercentage > 0 && (
               <div
-                className="absolute top-0 left-0 h-full overflow-hidden text-amber-500 fill-amber-500"
+                className="absolute top-0 left-0 h-full overflow-hidden text-sun-500 fill-sun-500"
                 style={{ width: `${fillPercentage}%` }}
               >
-                <svg viewBox="0 0 24 24" className={`${iconSizeClass} fill-current`}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" className={`${iconSizeClass} fill-current`}>
                   <path d={GRADUATION_CAP_PATH} />
                 </svg>
               </div>
@@ -117,7 +119,7 @@ export const RatingIcons: React.FC<RatingIconsProps> = ({
       })}
 
       {showValueLabel && (
-        <span className="ml-1 text-sm font-semibold text-gray-700">
+        <span className="ml-1 text-sm font-semibold text-ink-700">
           {value > 0 ? value.toFixed(1) : '—'}
         </span>
       )}

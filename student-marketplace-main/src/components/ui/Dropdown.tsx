@@ -50,7 +50,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         <div
           className={`absolute ${
             align === 'right' ? 'right-0' : 'left-0'
-          } mt-2 w-56 rounded-2xl bg-white shadow-xl ring-1 ring-black/5 divide-y divide-slate-100 z-50 animate-in fade-in zoom-in-95 duration-100`}
+          } mt-2 w-56 rounded-xl bg-surface shadow-xl ring-1 ring-ink-900/5 divide-y divide-ink-100 z-50 animate-in fade-in zoom-in-95 duration-100`}
         >
           {header && <div className="p-3">{header}</div>}
 
@@ -63,16 +63,14 @@ export const Dropdown: React.FC<DropdownProps> = ({
                   setIsOpen(false);
                   item.onClick();
                 }}
-                className={`flex w-full items-center gap-2.5 px-4 py-2 text-sm text-left transition-colors ${
+                className={`flex w-full items-center gap-2.5 px-4 py-2 text-sm text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cobalt-500 ${
                   item.danger
-                    ? 'text-red-600 hover:bg-red-50'
-                    : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'text-coral-600 hover:bg-coral-50'
+                    : 'text-ink-700 hover:bg-chalk hover:text-ink-900'
                 }`}
               >
                 {item.icon && (
-                  <span className="shrink-0 text-slate-400 group-hover:text-slate-600">
-                    {item.icon}
-                  </span>
+                  <span className="shrink-0 text-ink-400">{item.icon}</span>
                 )}
                 <span>{item.label}</span>
               </button>

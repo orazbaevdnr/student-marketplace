@@ -15,7 +15,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onSearchChange,
 }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-16 md:pb-8">
+    <div className="min-h-screen flex flex-col bg-chalk text-ink pb-20 md:pb-8">
       <Header searchQuery={searchQuery} onSearchChange={onSearchChange} />
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}

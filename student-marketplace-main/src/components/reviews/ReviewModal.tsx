@@ -84,15 +84,15 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         {listingTitle && (
-          <div className="bg-gray-50 rounded-lg p-2.5 text-xs text-gray-600 border border-gray-100 truncate">
-            <span className="font-semibold text-gray-700">Listing: </span>
+          <div className="bg-chalk rounded-lg p-2.5 text-xs text-ink-600 border border-ink-100 truncate">
+            <span className="font-semibold text-ink-700">Listing: </span>
             {listingTitle}
           </div>
         )}
 
         {/* Rating Section */}
         <div>
-          <label className="block text-sm font-semibold text-gray-800 mb-1">
+          <label className="block text-sm font-semibold text-ink-800 mb-1">
             {strings.reviews.ratingLabel}
           </label>
           <div className="flex items-center gap-3">
@@ -102,7 +102,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
               onChange={handleRatingChange}
               size="lg"
             />
-            <span className="text-sm font-bold text-gray-700 px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+            <span className="text-sm font-bold px-2 py-0.5 rounded bg-sun-50 text-sun-800 border border-sun-200">
               {strings.reviews.ratingLevels[rating] || RATING_LABELS[rating]}
             </span>
           </div>
@@ -110,7 +110,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
         {/* Dynamic Tags Selection */}
         <div>
-          <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+          <label className="block text-sm font-semibold text-ink-800 mb-1.5">
             {strings.reviews.tagsLabel}
           </label>
           <TagChips
@@ -125,30 +125,34 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
         {/* Comment field */}
         <div>
           <div className="flex justify-between items-center mb-1">
-            <label className="block text-sm font-semibold text-gray-800">
+            <label
+              htmlFor="review-comment"
+              className="block text-sm font-semibold text-ink-800"
+            >
               {strings.reviews.commentLabel}
             </label>
             <span
               className={`text-xs ${
-                comment.length >= maxCommentLength ? 'text-rose-600 font-semibold' : 'text-gray-400'
+                comment.length >= maxCommentLength ? 'text-coral-600 font-semibold' : 'text-ink-400'
               }`}
             >
               {strings.reviews.commentLimit.replace('{count}', String(comment.length))}
             </span>
           </div>
           <textarea
+            id="review-comment"
             value={comment}
             onChange={(e) => setComment(e.target.value.slice(0, maxCommentLength))}
             rows={3}
             maxLength={maxCommentLength}
             placeholder={strings.reviews.commentPlaceholder}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-colors"
+            className="w-full rounded-lg border border-ink-200 px-3 py-2 text-sm text-ink-900 placeholder-ink-400 focus:border-cobalt-500 focus:outline-none focus:ring-2 focus:ring-cobalt-100 transition-colors"
           />
         </div>
 
         {/* Error message */}
         {error && (
-          <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs">
+          <div className="p-3 rounded-lg bg-coral-50 border border-coral-200 text-coral-700 text-xs">
             {error}
           </div>
         )}
