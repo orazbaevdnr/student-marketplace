@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GraduationCap, Mail, Lock, User as UserIcon, AlertCircle, Sparkles } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
+import { isMockMode } from '../api';
 import { strings } from '../i18n/strings';
 import { isValidEmail } from '../utils/validation';
 import { Button } from '../components/ui/Button';
@@ -193,22 +194,24 @@ export const Login: React.FC = () => {
             </Button>
           </form>
 
-          {/* Instant Demo Login Button */}
-          <div className="mt-5 pt-4 border-t border-slate-100 text-center">
-            <Button
-              type="button"
-              variant="outline"
-              fullWidth
-              size="sm"
-              onClick={handleDemoLogin}
-              leftIcon={<Sparkles className="w-4 h-4 text-indigo-500" />}
-            >
-              Demo Login (Instant Access)
-            </Button>
-            <p className="text-[11px] text-slate-400 mt-1.5">
-              One-click evaluation access for grading and defense
-            </p>
-          </div>
+          {/* Instant Demo Login Button: only the in-browser mock has a demo account. */}
+          {isMockMode && (
+            <div className="mt-5 pt-4 border-t border-slate-100 text-center">
+              <Button
+                type="button"
+                variant="outline"
+                fullWidth
+                size="sm"
+                onClick={handleDemoLogin}
+                leftIcon={<Sparkles className="w-4 h-4 text-indigo-500" />}
+              >
+                Demo Login (Instant Access)
+              </Button>
+              <p className="text-[11px] text-slate-400 mt-1.5">
+                One-click evaluation access for grading and defense
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

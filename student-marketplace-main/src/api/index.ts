@@ -8,7 +8,10 @@ import { MockApiClient } from './mockAdapter';
 const isGitHubPages = typeof window !== 'undefined' && window.location.hostname.includes('github.io');
 const forceMock = import.meta.env.VITE_USE_MOCK === 'true';
 
-export const api: ApiClient = (isGitHubPages || forceMock)
+/** True when the app runs without a server (GitHub Pages or an explicit mock build). */
+export const isMockMode = isGitHubPages || forceMock;
+
+export const api: ApiClient = isMockMode
   ? new MockApiClient()
   : new RestApiClient();
 

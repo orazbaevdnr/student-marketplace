@@ -317,7 +317,63 @@ npm run build
 The generated `dist/index.html` then references `/assets/...` instead of
 `/student-marketplace/assets/...`.
 
-## 12. Troubleshooting
+## 12. Managed demo on Render
+
+Two Render services are enough: a Spring Boot web service and a static React site.
+
+### Backend web service
+
+- Root directory: `student-marketplace`
+- Build command: `mvn -B -DskipTests package`
+- Start command: `java -jar target/student-marketplace-1.0.0.jar`
+- Health check path: `/actuator/health`
+
+Environment variables:
+
+```
+SPRING_PROFILES_ACTIVE=prod
+DB_URL=jdbc:postgresql://<render-postgres-host>:5432/<database>
+DB_USER=<user>
+DB_PASSWORD=<password>
+JWT_SECRET=<32+ random characters>
+JWT_TTL_MINUTES=60
+ALLOWED_EMAIL_DOMAIN=kbtu.kz
+CORS_ORIGINS=https://<frontend-host>,https://orazbaevdnr.github.io
+ADMIN_EMAIL=admin@kbtu.kz
+ADMIN_PASSWORD=<strong password>
+PHOTO_DIR=/data/photos
+```
+
+Notes:
+
+- Flyway applies all migrations, including `V5__create_reviews.sql`, on every start. Restart
+  the service after deploying a new backend version; old instances have no review endpoints.
+- `server.port` already reads Render's `PORT` variable (`${PORT:8080}`).
+- Free instances sleep after inactivity, so the first request after a pause can take ~50 seconds.
+- Attach a Render persistent disk at `/data` if uploaded photos must survive redeploys; otherwise
+  the container filesystem is ephemeral.
+- Keep `CORS_ORIGINS` in sync with every frontend origin, including GitHub Pages if that build
+  talks to this API.
+
+### Frontend static site
+
+- Root directory: `student-marketplace-main`
+- Build command: `npm ci && npm run build`
+- Publish directory: `dist`
+- Rewrite rule: `/*` → `/index.html` (SPA routing)
+
+Build environment variables:
+
+```
+VITE_API_BASE_URL=https://<backend-host>/api/client
+VITE_BASE_PATH=/
+VITE_USE_MOCK=false
+```
+
+Do not publish the mock build when the site should use the real API: `npm run deploy` is only
+for the GitHub Pages demo.
+
+## 13. Troubleshooting
 
 | Symptom | Cause / fix |
 |---|---|
@@ -330,7 +386,7 @@ The generated `dist/index.html` then references `/assets/...` instead of
 | Changes to `.env.prod` do not apply | Recreate the service: `docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --force-recreate backend` |
 | Old frontend after deploy | `index.html` is cached by a proxy; the config sends `Cache-Control: no-cache` for it |
 
-## 13. Security notes
+## 14. Security notes
 
 See `SECURITY_REVIEW.md` for the full review. The short version:
 
