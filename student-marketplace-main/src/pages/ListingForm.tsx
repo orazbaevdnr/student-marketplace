@@ -4,7 +4,7 @@ import { ArrowLeft, Save, PlusCircle } from 'lucide-react';
 import { api, Category, Condition, Listing } from '../api';
 import { useAuth } from '../auth/AuthContext';
 import { strings } from '../i18n/strings';
-import { validateLength } from '../utils/validation';
+import { validateListingDraft } from '../utils/validation';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
@@ -86,37 +86,14 @@ export const ListingForm: React.FC = () => {
   };
 
   const validate = (): boolean => {
-    const errs: FormErrors = {};
-
-    const titleCheck = validateLength(title, 3, 120);
-    if (!titleCheck.valid) {
-      errs.title = titleCheck.error || 'Title must be 3-80 characters';
-    }
-
-    if (description.trim()) {
-      const descCheck = validateLength(description, 1, 2000);
-      if (!descCheck.valid) {
-        errs.description = descCheck.error || 'Description must be at most 2000 characters';
-      }
-    }
-
-    const numPrice = Number(price);
-    if (price === '' || isNaN(numPrice) || numPrice < 1) {
-      errs.price = 'Please enter a price of 1 or higher';
-    }
-
-    if (!category) {
-      errs.category = 'Please select a category';
-    }
-
-    if (!condition) {
-      errs.condition = 'Please select an item condition';
-    }
-
-    if (!contact.trim()) {
-      errs.contact = 'Please provide a contact method (Telegram handle or email)';
-    }
-
+    const errs = validateListingDraft({
+      title,
+      description,
+      price,
+      category,
+      condition,
+      contact,
+    });
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };

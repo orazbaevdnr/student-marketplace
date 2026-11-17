@@ -20,6 +20,63 @@ export function validateLength(
   return { valid: true };
 }
 
+export interface ListingDraft {
+  title: string;
+  description: string;
+  price: string;
+  category: string;
+  condition: string;
+  contact: string;
+}
+
+export interface ListingDraftErrors {
+  title?: string;
+  description?: string;
+  price?: string;
+  category?: string;
+  condition?: string;
+  contact?: string;
+}
+
+/**
+ * Pure listing validation shared by the form and the unit tests. Messages are
+ * the same ones the form has always shown.
+ */
+export function validateListingDraft(draft: ListingDraft): ListingDraftErrors {
+  const errors: ListingDraftErrors = {};
+
+  const titleCheck = validateLength(draft.title, 3, 120);
+  if (!titleCheck.valid) {
+    errors.title = titleCheck.error || 'Title must be 3-80 characters';
+  }
+
+  if (draft.description.trim()) {
+    const descCheck = validateLength(draft.description, 1, 2000);
+    if (!descCheck.valid) {
+      errors.description = descCheck.error || 'Description must be at most 2000 characters';
+    }
+  }
+
+  const numPrice = Number(draft.price);
+  if (draft.price === '' || isNaN(numPrice) || numPrice < 1) {
+    errors.price = 'Please enter a price of 1 or higher';
+  }
+
+  if (!draft.category) {
+    errors.category = 'Please select a category';
+  }
+
+  if (!draft.condition) {
+    errors.condition = 'Please select an item condition';
+  }
+
+  if (!draft.contact.trim()) {
+    errors.contact = 'Please provide a contact method (Telegram handle or email)';
+  }
+
+  return errors;
+}
+
 /**
  * Resizes an image file if it exceeds maxDimension and converts it to a JPEG data URL.
  * Protects localStorage quota in mock mode.
