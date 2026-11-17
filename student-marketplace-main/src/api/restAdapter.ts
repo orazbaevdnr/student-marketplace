@@ -13,29 +13,6 @@ import {
   UpdateListingInput,
   User,
 } from './types';
-import { computeSellerStats, sanitizeText } from '../utils/reviews';
-
-const STORAGE_KEY_REVIEWS = 'sm_reviews_v2';
-
-function getStoredLocalReviews(): Review[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY_REVIEWS);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY_REVIEWS, '[]');
-      return [];
-    }
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-function saveStoredLocalReviews(reviews: Review[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEY_REVIEWS, JSON.stringify(reviews));
-  } catch {}
-}
-
 export class RestApiClient implements ApiClient {
   private baseUrl: string;
 
@@ -190,142 +167,60 @@ export class RestApiClient implements ApiClient {
     });
   }
 
-  // ---- Reviews (with backend attempt & local persistence fallback) ----
+  // ---- Reviews: the Spring Boot backend is the single source of truth ----
 
   async getReviews(query: ReviewQuery): Promise<Paged<Review>> {
-    try {
-      const params = new URLSearchParams();
-      if (query.sellerId) params.set('sellerId', query.sellerId);
-      if (query.reviewerId) params.set('reviewerId', query.reviewerId);
-      if (query.listingId) params.set('listingId', query.listingId);
-      if (query.page) params.set('page', String(query.page));
-      if (query.pageSize) params.set('pageSize', String(query.pageSize));
-      const qs = params.toString();
-      return await this.request<Paged<Review>>(`/reviews${qs ? `?${qs}` : ''}`);
-    } catch {
-      let items = getStoredLocalReviews();
-      if (query.sellerId) items = items.filter((r) => r.sellerId === query.sellerId);
-      if (query.reviewerId) items = items.filter((r) => r.reviewerId === query.reviewerId);
-      if (query.listingId) items = items.filter((r) => r.listingId === query.listingId);
-      items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      const total = items.length;
-      const page = Math.max(1, query.page || 1);
-      const pageSize = Math.max(1, query.pageSize || 10);
-      return {
-        items: items.slice((page - 1) * pageSize, page * pageSize),
-        total,
-        page,
-        pageSize,
-      };
-    }
+    const params = new URLSearchParams();
+    if (query.sellerId) params.set('sellerId', query.sellerId);
+    if (query.reviewerId) params.set('reviewerId', query.reviewerId);
+    if (query.listingId) params.set('listingId', query.listingId);
+    if (query.page) params.set('page', String(query.page));
+    if (query.pageSize) params.set('pageSize', String(query.pageSize));
+    const qs = params.toString();
+    return await this.request<Paged<Review>>(`/reviews${qs ? `?${qs}` : ''}`);
   }
 
   async getSellerReviews(sellerId: string): Promise<Review[]> {
-    try {
-      return await this.request<Review[]>(`/sellers/${sellerId}/reviews`);
-    } catch {
-      const items = getStoredLocalReviews();
-      return items
-        .filter((r) => r.sellerId === sellerId)
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
+    return await this.request<Review[]>(`/sellers/${sellerId}/reviews`);
   }
 
   async getMyReviewForListing(reviewerId: string, listingId: string): Promise<Review | null> {
     try {
-      return await this.request<Review>(`/reviews/mine?reviewerId=${reviewerId}&listingId=${listingId}`);
-    } catch {
-      const items = getStoredLocalReviews();
-      return items.find((r) => r.reviewerId === reviewerId && r.listingId === listingId) || null;
+      return await this.request<Review>(
+        `/reviews/mine?reviewerId=${encodeURIComponent(reviewerId)}&listingId=${encodeURIComponent(listingId)}`
+      );
+    } catch (error) {
+      // 404 simply means "this user has not reviewed this listing yet".
+      if ((error as { status?: number }).status === 404) {
+        return null;
+      }
+      throw error;
     }
   }
 
   async createReview(data: Omit<Review, 'id' | 'createdAt' | 'updatedAt'>): Promise<Review> {
-    try {
-      return await this.request<Review>('/reviews', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
-    } catch {
-      const items = getStoredLocalReviews();
-      const now = new Date().toISOString();
-      const newReview: Review = {
-        ...data,
-        id: `rev-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-        comment: sanitizeText(data.comment || ''),
-        createdAt: now,
-        updatedAt: now,
-      };
-      items.unshift(newReview);
-      saveStoredLocalReviews(items);
-      return newReview;
-    }
+    return await this.request<Review>('/reviews', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 
   async updateReview(
     id: string,
     data: Partial<Pick<Review, 'rating' | 'tags' | 'comment'>>
   ): Promise<Review> {
-    try {
-      return await this.request<Review>(`/reviews/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-      });
-    } catch {
-      const items = getStoredLocalReviews();
-      const idx = items.findIndex((r) => r.id === id);
-      if (idx !== -1) {
-        items[idx] = {
-          ...items[idx],
-          ...data,
-          comment: data.comment !== undefined ? sanitizeText(data.comment) : items[idx].comment,
-          updatedAt: new Date().toISOString(),
-        };
-        saveStoredLocalReviews(items);
-        return items[idx];
-      }
-      throw new Error('Review not found');
-    }
+    return await this.request<Review>(`/reviews/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
   }
 
   async deleteReview(id: string): Promise<boolean> {
-    try {
-      await this.request<void>(`/reviews/${id}`, { method: 'DELETE' });
-      return true;
-    } catch {
-      const items = getStoredLocalReviews().filter((r) => r.id !== id);
-      saveStoredLocalReviews(items);
-      return true;
-    }
+    await this.request<void>(`/reviews/${id}`, { method: 'DELETE' });
+    return true;
   }
 
   async getSellerProfile(sellerId: string): Promise<SellerProfile> {
-    try {
-      return await this.request<SellerProfile>(`/sellers/${sellerId}/profile`);
-    } catch {
-      const user = (await this.getProfile(sellerId)) || {
-        id: sellerId,
-        name: 'Student Seller',
-        email: `${sellerId}@univ.edu`,
-        emailVerified: true,
-      };
-      const sellerReviews = await this.getSellerReviews(sellerId);
-      const stats = computeSellerStats(sellerReviews);
-
-      let activeListingsCount = 0;
-      let soldCount = 0;
-      try {
-        const myListings = await this.getMyListings(sellerId);
-        activeListingsCount = myListings.filter((l) => l.status === 'active').length;
-        soldCount = myListings.filter((l) => l.status === 'sold').length;
-      } catch {}
-
-      return {
-        user,
-        stats,
-        activeListingsCount,
-        soldCount,
-      };
-    }
+    return await this.request<SellerProfile>(`/sellers/${sellerId}/profile`);
   }
 }

@@ -9,8 +9,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /** JSON shapes of API_CONTRACT.md (the React frontend). Field names are exactly the ones the frontend uses. */
 public final class ClientDtos {
@@ -84,5 +86,44 @@ public final class ClientDtos {
     }
 
     public record AuthResponse(String token, String tokenType, long expiresInSeconds, UserDto user) {
+    }
+
+    // ---- Reviews ----------------------------------------------------------
+
+    public record ReviewDto(String id, String sellerId, String reviewerId, String listingId,
+                            String listingTitle, String reviewerName, String reviewerAvatarUrl,
+                            int rating, List<String> tags, String comment,
+                            Instant createdAt, Instant updatedAt) {
+    }
+
+    /** Page numbers start at 1 (as in the listing search of the contract). */
+    public record ReviewPage(List<ReviewDto> items, long total, int page, int pageSize) {
+    }
+
+    /**
+     * Body of POST /reviews. reviewerId and sellerId from the contract are ignored on purpose:
+     * the reviewer is the logged-in user and the seller is the owner of the listing.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record ReviewRequest(
+            @NotBlank String listingId,
+            @NotNull @Min(1) @Max(5) Integer rating,
+            @Size(max = 9) List<@NotBlank String> tags,
+            @Size(max = 2000) String comment) {
+    }
+
+    /** Fields that are missing stay unchanged. */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record ReviewPatch(
+            @Min(1) @Max(5) Integer rating,
+            @Size(max = 9) List<@NotBlank String> tags,
+            @Size(max = 2000) String comment) {
+    }
+
+    public record SellerStatsDto(long reviewCount, double averageRating, Map<Integer, Long> distribution,
+                                 List<String> topTags, List<String> badges) {
+    }
+
+    public record SellerProfileDto(UserDto user, SellerStatsDto stats, long activeListingsCount, long soldCount) {
     }
 }

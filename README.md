@@ -22,9 +22,11 @@ The frontend is hybrid, so the same code works locally and on GitHub Pages:
 | Docker / production build (`npm run build`) | Real backend on the same origin | `VITE_API_BASE_URL=/api/client`, Nginx proxies `/api` |
 | GitHub Pages (`npm run deploy`) | In-browser demo (mock adapter + `localStorage`) | `npm run build:pages` (`--mode pages`); runtime also forces mock on `*.github.io` |
 
-The reviews system (ratings, tags, seller badges, top sellers) is implemented in both modes. The
-backend does not expose review endpoints yet: the REST adapter tries `/api/client/reviews` and
-falls back to `localStorage` when the endpoint is unavailable.
+The reviews system (ratings, tags, seller badges, top sellers) is implemented in both modes.
+With the Spring Boot backend, reviews are stored in PostgreSQL (`reviews` table, Flyway `V5`) and
+served by `/api/client/reviews`, `/api/client/sellers/{id}/reviews` and
+`/api/client/sellers/{id}/profile`, so every account and device sees the same feedback. Seller
+statistics and badges are computed by the backend with the same rules as the mock adapter.
 
 ## Quick start (local, full stack)
 

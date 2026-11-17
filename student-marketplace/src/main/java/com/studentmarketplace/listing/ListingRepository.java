@@ -54,4 +54,7 @@ public interface ListingRepository extends JpaRepository<Listing, String>, JpaSp
 
     @Query("select l.status, count(l) from Listing l group by l.status")
     List<Object[]> countByStatus();
+
+    /** Seller profile counters: active and sold listings. */
+    long countBySellerIdAndStatus(Long sellerId, ListingStatus status);
 }

@@ -258,3 +258,94 @@ All endpoints except `POST /auth/register`, `POST /auth/login` and the public `G
 }
 ```
 - **Response:** `200 OK` returns updated `User` object.
+
+---
+
+## 4. Reviews and seller profiles
+
+Reviews are stored on the server, so every device and account sees the same feedback.
+All endpoints require a Bearer token.
+
+### 4.1 List reviews
+- **Method:** `GET`
+- **Path:** `/reviews`
+- **Query:** `sellerId`, `reviewerId`, `listingId`, `page` (1-based), `pageSize` (max 100)
+- **Response:** `200 OK`
+```json
+{
+  "items": [
+    {
+      "id": "12",
+      "sellerId": "4",
+      "reviewerId": "7",
+      "listingId": "L-101",
+      "listingTitle": "Calculus 8th Edition",
+      "reviewerName": "Client reviewer",
+      "reviewerAvatarUrl": null,
+      "rating": 5,
+      "tags": ["as_described", "fast_reply"],
+      "comment": "Book was exactly as described.",
+      "createdAt": "2026-11-17T10:00:00Z",
+      "updatedAt": "2026-11-17T10:00:00Z"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "pageSize": 20
+}
+```
+
+### 4.2 Reviews of one seller
+- **Method:** `GET`
+- **Path:** `/sellers/:sellerId/reviews`
+- **Response:** `200 OK` returns an array of `Review` objects.
+
+### 4.3 My review for a listing
+- **Method:** `GET`
+- **Path:** `/reviews/mine?listingId=:listingId`
+- **Response:** `200 OK` with the `Review`, or `404` when the user has not reviewed the listing yet.
+
+### 4.4 Create review
+- **Method:** `POST`
+- **Path:** `/reviews`
+- **Request Body:**
+```json
+{
+  "listingId": "L-101",
+  "rating": 5,
+  "tags": ["as_described", "fast_reply"],
+  "comment": "Book was exactly as described."
+}
+```
+- **Rules:** the reviewer is the logged-in user, the seller is the listing owner, one review per
+  listing per user, and a seller cannot review their own listing.
+- **Response:** `201 Created` returns the `Review`.
+
+### 4.5 Update / delete review
+- **Methods:** `PATCH /reviews/:id`, `DELETE /reviews/:id`
+- **Request Body (PATCH):** `rating`, `tags`, `comment` (all optional)
+- **Rules:** only the review author (or an administrator) may change or delete it.
+- **Response:** `200 OK` with the updated `Review` or `{ "success": true }`.
+
+### 4.6 Seller profile with rating statistics
+- **Method:** `GET`
+- **Path:** `/sellers/:sellerId/profile`
+- **Response:** `200 OK`
+```json
+{
+  "user": { "id": "4", "name": "Client seller", "avatarUrl": null, "faculty": null },
+  "stats": {
+    "reviewCount": 1,
+    "averageRating": 5.0,
+    "distribution": { "1": 0, "2": 0, "3": 0, "4": 0, "5": 1 },
+    "topTags": ["as_described", "fast_reply"],
+    "badges": ["new_seller"]
+  },
+  "activeListingsCount": 1,
+  "soldCount": 0
+}
+```
+
+Badges use the same rules as the frontend: fewer than 3 reviews → `new_seller`; otherwise
+`trusted_seller` (average ≥ 4.5), `fast_responder` (3+ `fast_reply`) and
+`honest_listings` (3+ `as_described`).
