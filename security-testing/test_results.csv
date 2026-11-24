@@ -1,0 +1,21 @@
+﻿ID,Test case,Steps / input,Expected result,Observed result / evidence,Result
+SM01,Unauthenticated access,GET a protected API endpoint without a JWT,401 Unauthorized,SecurityConfig requires authentication for non-public endpoints; live request not executed.,Pass — source review
+SM02,Malformed JWT,Send an invalid Bearer token,401; token must not authenticate,JwtService parses signed claims and rejects malformed tokens; live request not executed.,Pass — source review
+SM03,Expired JWT,Send an expired signed token,401 Unauthorized,JWT parser validates token expiration; live request not executed.,Pass — source review
+SM04,Buyer accesses admin API,Use BUYER/SELLER token on /api/admin/**,403 Forbidden,SecurityConfig requires ROLE_ADMIN; live role test not executed.,Pass — source review
+SM05,Administrator access,Use ADMIN token on an authorized admin endpoint,Authorized response,Admin role route rule exists; successful live request not executed.,Pass — source review
+SM06,Edit another seller's listing,Seller A updates Seller B's listing ID,403 Forbidden,ListingService checks owner ID before update; live request not executed.,Pass — source review
+SM07,Delete another seller's listing,Seller A deletes Seller B's listing ID,403 Forbidden,ListingService.delete checks seller/admin ownership; live request not executed.,Pass — source review
+SM08,Read hidden listing,Unrelated user requests hidden listing,404 Not Found,ListingService.get hides listings from non-managers; live request not executed.,Pass — source review
+SM09,Read hidden listing photo,Anonymous user requests a hidden listing's image,404 Not Found,PhotoService.content checks hidden status and manager identity; live request not executed.,Pass — source review
+SM10,Fake image extension,Upload text/executable content named photo.jpg,400; file is not stored,"PhotoStorage validates file signature bytes, not filename; live upload not executed.",Pass — source review
+SM11,Path traversal,Attempt ../ path in photo storage path,Reject; resolved path stays inside storage root,PhotoStorage normalizes path and checks startsWith(root); live request not executed.,Pass — source review
+SM12,Exceed photo count,Upload a sixth photo to one listing,409 Conflict; maximum five photos,PhotoService checks configured maximum before saving; live upload not executed.,Pass — source review
+SM13,Oversized upload,Upload beyond configured multipart size,Request rejected (5 MB file / 6 MB request),application.yml defines multipart limits; live upload not executed.,Pass — source review
+SM14,Login brute-force,Exceed configured attempts per IP per minute,429 Too Many Requests + Retry-After,LoginRateLimitFilter implements per-IP throttling; existing unit test found but not run.,Pass — source review
+SM15,Unapproved CORS origin,Send preflight from an origin outside CORS_ORIGINS,No Access-Control-Allow-Origin permission,SecurityConfig uses explicit allowed origins; live preflight not executed.,Pass — source review
+SM16,SQL injection in search,Use ' OR 1=1 -- in search input,Input treated as data; no unauthorized rows,Database-backed injection scenario was not executed.,Not run
+SM17,Default database password,Start without DB_PASSWORD,No known default password is silently used,Original config used DB_PASSWORD:admin; changed to required ${DB_PASSWORD}. Runtime startup retest pending.,Fail → fixed in source
+SM18,Default JWT secret,Start without JWT_SECRET,No predictable fallback secret is used,Original config had predictable JWT fallback; changed to required ${JWT_SECRET}. Runtime startup retest pending.,Fail → fixed in source
+SM19,Default admin password,Start without ADMIN_PASSWORD,No admin account created with known default password,Original config supplied Admin12345!; changed to empty default; bootstrap skips blank password. Runtime retest pending.,Fail → fixed in source
+SM20,Production error/API disclosure,Run prod profile and inspect error responses/API docs,No stack traces; Swagger/API docs disabled,application-prod.yml suppresses error details and disables docs; live profile test not executed.,Pass — source review
