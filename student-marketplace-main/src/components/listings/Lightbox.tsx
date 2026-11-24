@@ -9,6 +9,7 @@ interface LightboxProps {
 }
 
 const SWIPE_THRESHOLD = 50;
+const DRAG_TOLERANCE = 5;
 
 function clampIndex(index: number, length: number): number {
   if (length === 0) return 0;
@@ -40,6 +41,7 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose 
   const dragStartX = useRef<number | null>(null);
   const dragXRef = useRef(0);
   const isDragging = useRef(false);
+  const didDrag = useRef(false);
   const reducedMotion = useRef(prefersReducedMotion());
 
   const total = images.length;
@@ -172,7 +174,12 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose 
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!hasMultiple) return;
+    // The arrows sit inside the stage. Capturing the pointer on the stage would
+    // retarget pointerup (and therefore the click) to the stage, so the arrow
+    // never receives its click and the viewer closes instead of advancing.
+    if ((event.target as HTMLElement | null)?.closest('button')) return;
     isDragging.current = true;
+    didDrag.current = false;
     dragStartX.current = event.clientX;
     dragXRef.current = 0;
     setDragX(0);
@@ -187,6 +194,9 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose 
     if (!isDragging.current || dragStartX.current === null) return;
     const delta = event.clientX - dragStartX.current;
     dragXRef.current = delta;
+    if (Math.abs(delta) > DRAG_TOLERANCE) {
+      didDrag.current = true;
+    }
     setDragX(delta);
   };
 
@@ -219,6 +229,11 @@ export const Lightbox: React.FC<LightboxProps> = ({ images, startIndex, onClose 
   };
 
   const handleStageClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    // A swipe ends with a click on the stage; do not treat it as "close".
+    if (didDrag.current) {
+      didDrag.current = false;
+      return;
+    }
     if (event.target === event.currentTarget) {
       onClose();
     }
